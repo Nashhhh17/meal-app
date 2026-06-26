@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getCategories, getMealsByCategory, searchMeals } from "@/lib/api";
 import { Category, MealSummary } from "@/types/meal";
@@ -14,7 +14,7 @@ import { Category, MealSummary } from "@/types/meal";
 // --burnt-peach: #ee6c4d
 // --jet-black:   #293241
 
-export default function FoodPage() {
+function FoodPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -220,5 +220,13 @@ export default function FoodPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function FoodPage() {
+  return (
+    <Suspense fallback={null}>
+      <FoodPageContent />
+    </Suspense>
   );
 }
