@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getMealById } from "@/lib/api";
 import { extractIngredients } from "@/types/meal";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 // Color palette
 // --dusk-blue:   #3d5a80
@@ -10,6 +11,32 @@ import { notFound } from "next/navigation";
 // --light-cyan:  #e0fbfc
 // --burnt-peach: #ee6c4d
 // --jet-black:   #293241
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const meal = await getMealById(id);
+
+  if (!meal) {
+    return { title: "Meal not found | meal-app" };
+  }
+
+  const description = `Learn how to make ${meal.strMeal}, a ${meal.strArea} ${meal.strCategory} dish. Full ingredients list and step-by-step cooking instructions.`;
+
+  return {
+    title: `${meal.strMeal} Recipe | meal-app`,
+    description,
+    openGraph: {
+      title: meal.strMeal,
+      description,
+      images: [{ url: meal.strMealThumb, width: 400, height: 400, alt: meal.strMeal }],
+      type: "article",
+    },
+  };
+}
 
 export default async function MealDetailPage({
   params,
